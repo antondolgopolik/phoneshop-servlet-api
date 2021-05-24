@@ -3,14 +3,15 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
-    private final List<Product> products = new ArrayList<>();
-    private volatile long maxId;
-
-    private final Object mutex = new Object();
+    private final Map<Long, Product> products = new HashMap<>();
+    private volatile long nextId;
 
     public ArrayListProductDao() {
         initProducts();
@@ -35,17 +36,22 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public Product getProduct(Long id) throws NoProductWithSuchIdException {
-        synchronized (mutex) {
-            return products.stream()
-                    .filter(product -> product.getId().equals(id))
-                    .findAny()
-                    .orElseThrow(() -> new NoProductWithSuchIdException(id));
+        // Find product
+        Product product;
+        synchronized (products) {
+            product = products.get(id);
+        }
+        // Handle result
+        if (product != null) {
+            return product;
+        } else {
+            throw new NoProductWithSuchIdException(id);
         }
     }
 
     @Override
-    public List<Product> findProducts() {
-        return products.stream()
+    public synchronized List<Product> findProducts() {
+        return products.values().stream()
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)
                 .collect(Collectors.toList());
@@ -53,26 +59,33 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public void save(Product product) {
-        synchronized (mutex) {
-            product.setId(maxId++);
-            products.add(product);
+        Long id = product.getId();
+        if (id == null) {
+            id = nextId();
+            product.setId(id);
         }
+        synchronized (products) {
+            products.put(id, product);
+        }
+    }
+
+    private synchronized long nextId() {
+        while (products.containsKey(nextId)) {
+            nextId++;
+        }
+        return nextId;
     }
 
     @Override
     public void delete(Long id) throws NoProductWithSuchIdException {
-        // Create key
-        Product key = new Product();
-        key.setId(id);
-        synchronized (mutex) {
-            // Find index
-            int index = Collections.binarySearch(products, key, Comparator.comparing(Product::getId));
-            // Check if item is found
-            if (index >= 0) {
-                products.remove(index);
-            } else {
-                throw new NoProductWithSuchIdException(id);
-            }
+        // Delete product
+        Product product;
+        synchronized (products) {
+            product = products.remove(id);
+        }
+        // Check result
+        if (product == null) {
+            throw new NoProductWithSuchIdException(id);
         }
     }
 }
