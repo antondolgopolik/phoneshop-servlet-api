@@ -49,7 +49,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query) {
+    public List<Product> findProducts(String query, SortType sortType, OrderType orderType) {
         synchronized (products) {
             Collection<Product> products = this.products.values();
             // General filtration
@@ -59,6 +59,10 @@ public class ArrayListProductDao implements ProductDao {
             // Search
             if (query != null) {
                 stream = search(stream, query);
+            }
+            // Sort
+            if (sortType != null) {
+                stream = sort(stream, sortType, orderType);
             }
             // Result
             return stream.collect(Collectors.toList());
@@ -94,6 +98,22 @@ public class ArrayListProductDao implements ProductDao {
                         )
                 )
                 .count();
+    }
+
+    private Stream<Product> sort(Stream<Product> stream, SortType sortType, OrderType orderType) {
+        if (sortType == SortType.DESCRIPTION) {
+            if (orderType == OrderType.DESCENDING) {
+                return stream.sorted(Comparator.comparing(Product::getDescription).reversed());
+            } else {
+                return stream.sorted(Comparator.comparing(Product::getDescription));
+            }
+        } else {
+            if (orderType == OrderType.DESCENDING) {
+                return stream.sorted(Comparator.comparing(Product::getPrice).reversed());
+            } else {
+                return stream.sorted(Comparator.comparing(Product::getPrice));
+            }
+        }
     }
 
     @Override

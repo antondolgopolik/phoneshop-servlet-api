@@ -6,10 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,22 +33,48 @@ public class ArrayListProductDaoTest {
 
     @Test
     public void testFindProductsNullQuery() {
-        assertEquals(productDao.findProducts(null), productDao.findProducts(""));
+        assertFalse(productDao.findProducts(null, SortType.DESCRIPTION, OrderType.DESCENDING).isEmpty());
     }
 
     @Test
     public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts("").isEmpty());
+        assertFalse(productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING).isEmpty());
     }
 
     @Test
     public void testFindProductsGeneralFilter() {
-        List<Product> products1 = productDao.findProducts("");
+        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
         List<Product> products2 = products1.stream()
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)
                 .collect(Collectors.toList());
         assertEquals(products1, products2);
+    }
+
+    @Test
+    public void testFindProductsDescriptionOrder() {
+        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.DESCENDING);
+        List<Product> products2 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
+        assertEquals(products1.size(), products2.size());
+        Collections.reverse(products2);
+        Iterator<Product> iterator1 = products1.iterator();
+        Iterator<Product> iterator2 = products2.iterator();
+        while (iterator1.hasNext()) {
+            assertEquals(iterator1.next().getPrice(), iterator2.next().getPrice());
+        }
+    }
+
+    @Test
+    public void testFindProductsPriceOrder() {
+        List<Product> products1 = productDao.findProducts("", SortType.PRICE, OrderType.DESCENDING);
+        List<Product> products2 = productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING);
+        assertEquals(products1.size(), products2.size());
+        Collections.reverse(products2);
+        Iterator<Product> iterator1 = products1.iterator();
+        Iterator<Product> iterator2 = products2.iterator();
+        while (iterator1.hasNext()) {
+            assertEquals(iterator1.next().getPrice(), iterator2.next().getPrice());
+        }
     }
 
     @Test
