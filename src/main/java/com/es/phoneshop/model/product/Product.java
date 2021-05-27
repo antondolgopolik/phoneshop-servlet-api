@@ -7,14 +7,22 @@ public class Product {
     private Long id;
     private String code;
     private String description;
-    /** null means there is no price because the product is outdated or new */
+    /**
+     * null means there is no price because the product is outdated or new
+     */
     private BigDecimal price;
-    /** can be null if the price is null */
+    /**
+     * can be null if the price is null
+     */
     private Currency currency;
     private int stock;
     private String imageUrl;
 
     public Product() {
+    }
+
+    public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+        this(null, code, description, price, currency, stock, imageUrl);
     }
 
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
@@ -81,5 +89,19 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Product) || (hashCode() != obj.hashCode())) {
+            return false;
+        }
+        Product product = (Product) obj;
+        return code.equals(product.code) && description.equals(product.description) &&
+                price.equals(product.price) && currency.equals(product.currency) &&
+                (stock == product.stock) && imageUrl.equals(product.imageUrl);
     }
 }
