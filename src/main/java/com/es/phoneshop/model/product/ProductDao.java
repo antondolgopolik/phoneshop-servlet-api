@@ -8,7 +8,7 @@ public interface ProductDao {
 
     Product getProduct(Long id) throws NoProductWithSuchIdException;
 
-    List<Product> findProducts();
+    List<Product> findProducts(String query);
 
     void save(Product product);
 

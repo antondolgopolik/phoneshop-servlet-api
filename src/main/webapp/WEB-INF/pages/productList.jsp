@@ -8,6 +8,12 @@
     <p>
         Welcome to Expert-Soft training!
     </p>
+    <form>
+        <label>
+            <input name="query">
+        </label>
+        <button>Search</button>
+    </form>
     <table>
         <thead>
         <tr>

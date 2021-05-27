@@ -6,9 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -31,13 +35,18 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts().isEmpty());
+    public void testFindProductsNullQuery() {
+        assertEquals(productDao.findProducts(null), productDao.findProducts(""));
     }
 
     @Test
-    public void testFindProductsCorrectFind() {
-        List<Product> products1 = productDao.findProducts();
+    public void testFindProductsNoResults() {
+        assertFalse(productDao.findProducts("").isEmpty());
+    }
+
+    @Test
+    public void testFindProductsGeneralFilter() {
+        List<Product> products1 = productDao.findProducts("");
         List<Product> products2 = products1.stream()
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)

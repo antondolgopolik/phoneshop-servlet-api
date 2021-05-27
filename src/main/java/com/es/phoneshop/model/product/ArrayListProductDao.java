@@ -3,11 +3,10 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
 
 import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ArrayListProductDao implements ProductDao {
     private final Map<Long, Product> products = new HashMap<>();
@@ -50,11 +49,51 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public synchronized List<Product> findProducts() {
-        return products.values().stream()
-                .filter(product -> product.getPrice() != null)
-                .filter(product -> product.getStock() > 0)
-                .collect(Collectors.toList());
+    public List<Product> findProducts(String query) {
+        synchronized (products) {
+            Collection<Product> products = this.products.values();
+            // General filtration
+            Stream<Product> stream = products.stream()
+                    .filter(product -> product.getPrice() != null)
+                    .filter(product -> product.getStock() > 0);
+            // Search
+            if (query != null) {
+                stream = search(stream, query);
+            }
+            // Result
+            return stream.collect(Collectors.toList());
+        }
+    }
+
+    private Stream<Product> search(Stream<Product> stream, String query) {
+        String[] queryWords = query.toLowerCase().split(" ");
+        return searchSort(searchFilter(stream, queryWords), queryWords);
+    }
+
+    private Stream<Product> searchFilter(Stream<Product> stream, String[] queryWords) {
+        return stream.filter(product -> {
+            String description = product.getDescription().toLowerCase();
+            return Arrays.stream(queryWords).anyMatch(description::contains);
+        });
+    }
+
+    private Stream<Product> searchSort(Stream<Product> stream, String[] queryWords) {
+        return stream.sorted((product1, product2) -> {
+            long metric1 = findMatchMetric(product1, queryWords);
+            long metric2 = findMatchMetric(product2, queryWords);
+            return Long.compare(metric2 - metric1, 0);
+        });
+    }
+
+    private long findMatchMetric(Product product, String[] queryWords) {
+        String[] descriptionWords = product.getDescription().toLowerCase().split(" ");
+        return Arrays.stream(descriptionWords)
+                .filter(descriptionWord ->
+                        Arrays.stream(queryWords).anyMatch(queryWord ->
+                                descriptionWord.matches(".*" + Pattern.quote(queryWord) + ".*")
+                        )
+                )
+                .count();
     }
 
     @Override
