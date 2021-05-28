@@ -6,19 +6,29 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ArrayListProductDaoTest {
     private ProductDao productDao;
 
     @Before
     public void setup() {
-        productDao = new ArrayListProductDao();
+        productDao = ArrayListProductDao.getInstance();
+        // Insert some test data
+        Currency usd = Currency.getInstance("USD");
+        for (int i = 0; i < 100; i++) {
+            productDao.save(new Product(
+                    "code " + i, "description " + i,
+                    BigDecimal.valueOf(i), usd, i, "url " + i
+            ));
+        }
     }
 
     @Test
