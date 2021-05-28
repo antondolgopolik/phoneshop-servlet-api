@@ -39,7 +39,9 @@
                          src="${product.imageUrl}"
                          alt="Error">
                 </td>
-                <td>${product.description}</td>
+                <td>
+                    <a href="./products/${product.id}">${product.description}</a>
+                </td>
                 <td class="price">
                     <fmt:formatNumber value="${product.price}" type="currency"
                                       currencySymbol="${product.currency.symbol}"/>
@@ -47,4 +49,5 @@
             </tr>
         </c:forEach>
     </table>
+    <tags:footer/>
 </tags:master>

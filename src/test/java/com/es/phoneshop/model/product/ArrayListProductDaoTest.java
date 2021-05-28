@@ -88,7 +88,7 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testSave() throws NoProductWithSuchIdException {
+    public void testSave() {
         Currency usd = Currency.getInstance("USD");
         Product product1 = new Product(
                 20L, "code1", "des1", BigDecimal.ZERO, usd, 1, "url1"
@@ -105,7 +105,7 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testDelete() throws NoProductWithSuchIdException {
+    public void testDelete() {
         productDao.delete(0L);
         try {
             productDao.getProduct(0L);
