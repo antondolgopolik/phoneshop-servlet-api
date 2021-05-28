@@ -2,26 +2,25 @@ package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ArrayListProductDao implements ProductDao {
-    private static volatile ArrayListProductDao instance;
+public class HashMapProductDao implements ProductDao {
+    private static volatile HashMapProductDao instance;
 
     private final Map<Long, Product> products = new HashMap<>();
     private volatile long nextId;
 
-    public static synchronized ArrayListProductDao getInstance() {
+    public static synchronized HashMapProductDao getInstance() {
         if (instance == null) {
-            instance = new ArrayListProductDao();
+            instance = new HashMapProductDao();
         }
         return instance;
     }
 
-    private ArrayListProductDao() {
+    private HashMapProductDao() {
     }
 
     @Override

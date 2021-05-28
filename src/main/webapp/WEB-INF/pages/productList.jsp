@@ -6,7 +6,7 @@
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
-        Welcome to Expert-Soft training!
+        Product List
     </p>
 
     <form>
@@ -43,8 +43,10 @@
                     <a href="./products/${product.id}">${product.description}</a>
                 </td>
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency"
-                                      currencySymbol="${product.currency.symbol}"/>
+                    <a href="./products/price/${product.id}">
+                        <fmt:formatNumber value="${product.price}" type="currency"
+                                          currencySymbol="${product.currency.symbol}"/>
+                    </a>
                 </td>
             </tr>
         </c:forEach>

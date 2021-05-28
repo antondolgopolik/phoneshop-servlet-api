@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class ArrayListProductDaoTest {
+public class HashMapProductDaoTest {
     private ProductDao productDao;
 
     @Before
     public void setup() {
-        productDao = ArrayListProductDao.getInstance();
+        productDao = HashMapProductDao.getInstance();
         // Insert some test data
         Currency usd = Currency.getInstance("USD");
         for (int i = 0; i < 100; i++) {

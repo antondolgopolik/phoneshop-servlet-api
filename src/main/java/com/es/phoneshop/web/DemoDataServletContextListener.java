@@ -1,6 +1,6 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.model.product.HashMapProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
@@ -21,7 +21,7 @@ public class DemoDataServletContextListener implements ServletContextListener {
     }
 
     private void insertDemoData() {
-        ProductDao productDao = ArrayListProductDao.getInstance();
+        ProductDao productDao = HashMapProductDao.getInstance();
         Currency usd = Currency.getInstance("USD");
         productDao.save(new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
         productDao.save(new Product("sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));
@@ -40,6 +40,5 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
     }
 }
