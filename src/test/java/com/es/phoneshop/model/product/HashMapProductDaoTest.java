@@ -6,18 +6,29 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Currency;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-public class ArrayListProductDaoTest {
+public class HashMapProductDaoTest {
     private ProductDao productDao;
 
     @Before
     public void setup() {
-        productDao = new ArrayListProductDao();
+        productDao = HashMapProductDao.getInstance();
+        // Insert some test data
+        Currency usd = Currency.getInstance("USD");
+        for (int i = 0; i < 100; i++) {
+            productDao.save(new Product(
+                    "code " + i, "description " + i,
+                    BigDecimal.valueOf(i), usd, i, "url " + i
+            ));
+        }
     }
 
     @Test
@@ -31,13 +42,18 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts().isEmpty());
+    public void testFindProductsNullQuery() {
+        assertFalse(productDao.findProducts(null, SortType.DESCRIPTION, OrderType.DESCENDING).isEmpty());
     }
 
     @Test
-    public void testFindProductsCorrectFind() {
-        List<Product> products1 = productDao.findProducts();
+    public void testFindProductsNoResults() {
+        assertFalse(productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING).isEmpty());
+    }
+
+    @Test
+    public void testFindProductsGeneralFilter() {
+        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
         List<Product> products2 = products1.stream()
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)
@@ -46,7 +62,33 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testSave() throws NoProductWithSuchIdException {
+    public void testFindProductsDescriptionOrder() {
+        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.DESCENDING);
+        List<Product> products2 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
+        assertEquals(products1.size(), products2.size());
+        Collections.reverse(products2);
+        Iterator<Product> iterator1 = products1.iterator();
+        Iterator<Product> iterator2 = products2.iterator();
+        while (iterator1.hasNext()) {
+            assertEquals(iterator1.next().getPrice(), iterator2.next().getPrice());
+        }
+    }
+
+    @Test
+    public void testFindProductsPriceOrder() {
+        List<Product> products1 = productDao.findProducts("", SortType.PRICE, OrderType.DESCENDING);
+        List<Product> products2 = productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING);
+        assertEquals(products1.size(), products2.size());
+        Collections.reverse(products2);
+        Iterator<Product> iterator1 = products1.iterator();
+        Iterator<Product> iterator2 = products2.iterator();
+        while (iterator1.hasNext()) {
+            assertEquals(iterator1.next().getPrice(), iterator2.next().getPrice());
+        }
+    }
+
+    @Test
+    public void testSave() {
         Currency usd = Currency.getInstance("USD");
         Product product1 = new Product(
                 20L, "code1", "des1", BigDecimal.ZERO, usd, 1, "url1"
@@ -63,7 +105,7 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testDelete() throws NoProductWithSuchIdException {
+    public void testDelete() {
         productDao.delete(0L);
         try {
             productDao.getProduct(0L);

@@ -6,28 +6,50 @@
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
-        Welcome to Expert-Soft training!
+        Product List
     </p>
+
+    <form>
+        <label>
+            <input name="query" value="${param.query}">
+        </label>
+        <button>Search</button>
+    </form>
+
     <table>
         <thead>
         <tr>
             <td>Image</td>
-            <td>Description</td>
-            <td class="price">Price</td>
+            <td>
+                Description
+                <tags:sortLink sort="description" order="des" content="\/"/>
+                <tags:sortLink sort="description" order="asc" content="/\\"/>
+            </td>
+            <td class="price">
+                Price
+                <tags:sortLink sort="price" order="des" content="\/"/>
+                <tags:sortLink sort="price" order="asc" content="/\\"/>
+            </td>
         </tr>
         </thead>
         <c:forEach var="product" items="${products}">
             <tr>
                 <td>
                     <img class="product-tile"
-                         src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+                         src="${product.imageUrl}"
+                         alt="Error">
                 </td>
-                <td>${product.description}</td>
+                <td>
+                    <a href="./products/${product.id}">${product.description}</a>
+                </td>
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency"
-                                      currencySymbol="${product.currency.symbol}"/>
+                    <a href="./products/price/${product.id}">
+                        <fmt:formatNumber value="${product.price}" type="currency"
+                                          currencySymbol="${product.currency.symbol}"/>
+                    </a>
                 </td>
             </tr>
         </c:forEach>
     </table>
+    <tags:footer/>
 </tags:master>
