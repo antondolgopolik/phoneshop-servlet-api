@@ -1,6 +1,9 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.*;
+import com.es.phoneshop.model.recentlyviewed.DefaultRecentlyViewedService;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewed;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,11 +14,13 @@ import java.util.List;
 
 public class ProductListPageServlet extends HttpServlet {
     private ProductDao productDao;
+    private RecentlyViewedService recentlyViewedService;
 
     @Override
     public void init() throws ServletException {
         super.init();
         productDao = HashMapProductDao.getInstance();
+        recentlyViewedService = DefaultRecentlyViewedService.getInstance();
     }
 
     @Override
@@ -32,8 +37,11 @@ public class ProductListPageServlet extends HttpServlet {
                 : null;
         // Find products
         List<Product> products = productDao.findProducts(query, sortType, orderType);
+        // Get recently viewed products
+        RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
         // Send response
         request.setAttribute("products", products);
+        request.setAttribute("recentlyViewed", recentlyViewed);
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 }

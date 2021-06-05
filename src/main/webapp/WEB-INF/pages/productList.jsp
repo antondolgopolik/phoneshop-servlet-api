@@ -4,6 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="recentlyViewed" type="com.es.phoneshop.model.recentlyviewed.RecentlyViewed" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
         Product List
@@ -51,5 +52,24 @@
             </tr>
         </c:forEach>
     </table>
+    <c:if test="${recentlyViewed.products.size() > 0}">
+        <p>
+            Recently viewed
+        </p>
+        <table>
+            <tr>
+                <c:forEach var="product" items="${recentlyViewed.products}">
+                    <td>
+                        <img class="product-tile"
+                             src="${product.imageUrl}"
+                             alt="Error">
+                        <p>
+                            <a href="./products/${product.id}">${product.description}</a>
+                        </p>
+                    </td>
+                </c:forEach>
+            </tr>
+        </table>
+    </c:if>
     <tags:footer/>
 </tags:master>

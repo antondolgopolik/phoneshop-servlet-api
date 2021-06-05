@@ -3,7 +3,6 @@ package com.es.phoneshop.model.cart;
 import com.es.phoneshop.exceptions.ProductNotEnoughException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public interface CartService {
 

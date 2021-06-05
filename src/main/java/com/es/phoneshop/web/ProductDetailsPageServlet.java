@@ -6,7 +6,11 @@ import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.HashMapProductDao;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.recentlyviewed.DefaultRecentlyViewedService;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewed;
+import com.es.phoneshop.model.recentlyviewed.RecentlyViewedService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,20 +23,26 @@ import java.text.ParseException;
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
+    private RecentlyViewedService recentlyViewedService;
 
     @Override
     public void init() throws ServletException {
         super.init();
         productDao = HashMapProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
+        recentlyViewedService = DefaultRecentlyViewedService.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read id
         long id = readId(request);
+        // Add to recently viewed products
+        RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
+        Product product = productDao.getProduct(id);
+        recentlyViewedService.update(recentlyViewed, product);
         // Send response
-        request.setAttribute("product", productDao.getProduct(id));
+        request.setAttribute("product", product);
         request.setAttribute("cart", cartService.getCart(request));
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
