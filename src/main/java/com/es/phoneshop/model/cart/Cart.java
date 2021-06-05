@@ -9,4 +9,17 @@ public class Cart {
     public List<CartItem> getItems() {
         return items;
     }
+
+    @Override
+    public String toString() {
+        if (items.isEmpty()) {
+            return "Cart is empty";
+        } else {
+            StringBuilder builder = new StringBuilder("Cart: ");
+            for (CartItem item : items) {
+                builder.append(item).append("; ");
+            }
+            return builder.toString();
+        }
+    }
 }

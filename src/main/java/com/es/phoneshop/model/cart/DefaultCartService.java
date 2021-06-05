@@ -1,8 +1,11 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.exceptions.ProductNotEnoughException;
 import com.es.phoneshop.model.product.HashMapProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+
+import java.util.List;
 
 public class DefaultCartService implements CartService {
     private static volatile DefaultCartService instance;
@@ -22,13 +25,33 @@ public class DefaultCartService implements CartService {
 
     @Override
     public Cart getCart() {
-        return null;
+        return cart;
     }
 
     @Override
-    public void add(Long productId, int quantity) {
+    public void add(Long productId, int quantity) throws ProductNotEnoughException {
+        // Try to find cart item
+        List<CartItem> items = cart.getItems();
         Product product = productDao.getProduct(productId);
-        CartItem cartItem = new CartItem(product, quantity);
-        cart.getItems().add(cartItem);
+        CartItem cartItem = items.parallelStream()
+                .filter(item -> item.getProduct().equals(product))
+                .findAny().orElse(null);
+        // Check if cart item was founded
+        if (cartItem != null) {
+            int resultQuantity = cartItem.getQuantity() + quantity;
+            // Check stock
+            if (resultQuantity > product.getStock()) {
+                throw new ProductNotEnoughException(product.getStock() - cartItem.getQuantity());
+            } else {
+                cartItem.setQuantity(resultQuantity);
+            }
+        } else {
+            // Check stock
+            if (quantity > product.getStock()) {
+                throw new ProductNotEnoughException(product.getStock());
+            } else {
+                items.add(new CartItem(product, quantity));
+            }
+        }
     }
 }
