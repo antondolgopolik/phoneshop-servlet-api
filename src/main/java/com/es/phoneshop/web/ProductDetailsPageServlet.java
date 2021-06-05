@@ -2,6 +2,7 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.exceptions.ProductNotEnoughException;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.HashMapProductDao;
@@ -32,7 +33,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         long id = readId(request);
         // Send response
         request.setAttribute("product", productDao.getProduct(id));
-        request.setAttribute("cart", cartService.getCart());
+        request.setAttribute("cart", cartService.getCart(request));
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
 
@@ -51,8 +52,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return;
         }
         // Add product to cart
+        Cart cart = cartService.getCart(request);
         try {
-            cartService.add(id, quantity);
+            cartService.add(cart, id, quantity);
         } catch (ProductNotEnoughException e) {
             request.setAttribute("result", false);
             request.setAttribute("quantityError", e.getMessage());
