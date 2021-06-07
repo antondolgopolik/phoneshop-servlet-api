@@ -46,7 +46,7 @@ public class HashMapProductDao implements ProductDao {
                 stream = search(stream, query);
             }
             // Sort
-            if (sortType != null) {
+            if ((sortType != null) && (orderType != null)) {
                 stream = sort(stream, sortType, orderType);
             }
             // Result

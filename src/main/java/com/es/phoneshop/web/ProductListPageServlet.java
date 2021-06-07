@@ -18,6 +18,10 @@ public class ProductListPageServlet extends HttpServlet {
     private static final String ORDER_PARAM = "order";
     private static final String PRODUCTS_ATTR = "products";
     private static final String RECENTLY_VIEWED_ATTR = "recentlyViewed";
+    private static final String DESCRIPTION_SORT = "description";
+    private static final String PRICE_SORT = "price";
+    private static final String DESCENDING_ORDER = "des";
+    private static final String ASCENDING_ORDER = "asc";
 
     private ProductDao productDao;
     private RecentlyViewedService recentlyViewedService;
@@ -33,14 +37,8 @@ public class ProductListPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read params
         String query = request.getParameter(QUERY_PARAM);
-        String sort = request.getParameter(SORT_PARAM);
-        String order = request.getParameter(ORDER_PARAM);
-        SortType sortType = sort != null
-                ? sort.equals("description") ? SortType.DESCRIPTION : SortType.PRICE
-                : null;
-        OrderType orderType = order != null
-                ? order.equals("des") ? OrderType.DESCENDING : OrderType.ASCENDING
-                : null;
+        SortType sortType = readSortType(request);
+        OrderType orderType = readOrderType(request);
         // Find products
         List<Product> products = productDao.findProducts(query, sortType, orderType);
         // Get recently viewed products
@@ -49,5 +47,25 @@ public class ProductListPageServlet extends HttpServlet {
         request.setAttribute(PRODUCTS_ATTR, products);
         request.setAttribute(RECENTLY_VIEWED_ATTR, recentlyViewed);
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
+    }
+
+    private SortType readSortType(HttpServletRequest request) {
+        String sort = request.getParameter(SORT_PARAM);
+        if (sort != null) {
+            return sort.equals(DESCRIPTION_SORT)
+                    ? SortType.DESCRIPTION
+                    : sort.equals(PRICE_SORT) ? SortType.PRICE : null;
+        }
+        return null;
+    }
+
+    private OrderType readOrderType(HttpServletRequest request) {
+        String order = request.getParameter(ORDER_PARAM);
+        if (order != null) {
+            return order.equals(DESCENDING_ORDER)
+                    ? OrderType.DESCENDING
+                    : order.equals(ASCENDING_ORDER) ? OrderType.ASCENDING : null;
+        }
+        return null;
     }
 }
