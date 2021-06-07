@@ -43,7 +43,7 @@ public class DefaultCartService implements CartService {
             CartItem cartItem = items.parallelStream()
                     .filter(item -> item.getProduct().equals(product))
                     .findAny().orElse(null);
-            // Check if cart item was founded
+            // Check if cart item was found
             if (cartItem != null) {
                 int resultQuantity = cartItem.getQuantity() + quantity;
                 // Check stock
