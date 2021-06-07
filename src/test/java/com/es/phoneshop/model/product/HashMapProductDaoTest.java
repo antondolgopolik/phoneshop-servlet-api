@@ -2,7 +2,7 @@ package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -12,23 +12,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class HashMapProductDaoTest {
-    private ProductDao productDao;
+    private final ProductDao productDao = HashMapProductDao.getInstance();
 
-    @Before
-    public void setup() {
-        productDao = HashMapProductDao.getInstance();
-        // Insert some test data
-        Currency usd = Currency.getInstance("USD");
-        for (int i = 0; i < 100; i++) {
-            productDao.save(new Product(
-                    "code " + i, "description " + i,
-                    BigDecimal.valueOf(i), usd, i, "url " + i
-            ));
+    public static void initHashMapProductDao(int n) {
+        HashMapProductDao hashMapProductDao = HashMapProductDao.getInstance();
+        Product[] products = ProductTest.getMockProducts(n);
+        for (Product product : products) {
+            hashMapProductDao.save(product);
         }
+    }
+
+    @BeforeClass
+    public static void classSetup() {
+        initHashMapProductDao(100);
     }
 
     @Test
@@ -106,23 +105,31 @@ public class HashMapProductDaoTest {
 
     @Test
     public void testDelete() {
+        boolean flag = false;
         productDao.delete(0L);
         try {
             productDao.getProduct(0L);
-            Assert.fail();
         } catch (NoProductWithSuchIdException ignored) {
+            flag = true;
         }
+        assertTrue(flag);
+
+        flag = false;
         productDao.delete(10L);
         try {
             productDao.getProduct(10L);
-            Assert.fail();
         } catch (NoProductWithSuchIdException ignored) {
+            flag = true;
         }
+        assertTrue(flag);
+
+        flag = false;
         productDao.delete(12L);
         try {
             productDao.getProduct(12L);
-            Assert.fail();
         } catch (NoProductWithSuchIdException ignored) {
+            flag = true;
         }
+        assertTrue(flag);
     }
 }
