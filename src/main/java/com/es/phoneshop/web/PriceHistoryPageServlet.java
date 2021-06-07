@@ -24,14 +24,17 @@ public class PriceHistoryPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read id
-        long id;
-        try {
-            id = Long.parseLong(request.getPathInfo().substring(1));
-        } catch (NumberFormatException e) {
-            throw new ProductNotFoundException();
-        }
+        long id = readId(request);
         // Send response
         request.setAttribute(PRODUCT_ATTR, productDao.getProduct(id));
         request.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(request, response);
+    }
+
+    private long readId(HttpServletRequest request) {
+        try {
+            return Long.parseLong(request.getPathInfo().substring(1));
+        } catch (NumberFormatException e) {
+            throw new ProductNotFoundException();
+        }
     }
 }
