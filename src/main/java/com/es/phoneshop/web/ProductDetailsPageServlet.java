@@ -1,5 +1,6 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.exceptions.IllegalProductQuantityValueException;
 import com.es.phoneshop.exceptions.ProductNotEnoughException;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.model.cart.Cart;
@@ -59,21 +60,19 @@ public class ProductDetailsPageServlet extends HttpServlet {
         long id = readId(request);
         int quantity;
         try {
-            NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
-            quantity = numberFormat.parse(request.getParameter(QUANTITY_PARAM)).intValue();
+            quantity = readQuantity(request);
         } catch (ParseException e) {
             sendResponseWithQuantityErrorMessage(request, response, "Number format exception");
             return;
-        }
-        if (quantity < 1) {
-            sendResponseWithQuantityErrorMessage(request, response, "Quantity should be greater than 0");
+        } catch (IllegalProductQuantityValueException e) {
+            sendResponseWithQuantityErrorMessage(request, response, e.getMessage());
             return;
         }
         // Add product to cart
         Cart cart = cartService.getCart(request);
         try {
             cartService.add(cart, id, quantity);
-        } catch (ProductNotEnoughException e) {
+        } catch (IllegalProductQuantityValueException | ProductNotEnoughException e) {
             sendResponseWithQuantityErrorMessage(request, response, e.getMessage());
             return;
         }
@@ -86,6 +85,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return Long.parseLong(request.getPathInfo().substring(1));
         } catch (NumberFormatException e) {
             throw new ProductNotFoundException();
+        }
+    }
+
+    private int readQuantity(HttpServletRequest request) throws ParseException {
+        NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
+        Number number = numberFormat.parse(request.getParameter(QUANTITY_PARAM));
+        if (number.doubleValue() == number.intValue()) {
+            return number.intValue();
+        } else {
+            throw new IllegalProductQuantityValueException();
         }
     }
 

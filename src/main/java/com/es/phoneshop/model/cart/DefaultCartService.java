@@ -1,5 +1,6 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.exceptions.IllegalProductQuantityValueException;
 import com.es.phoneshop.exceptions.ProductNotEnoughException;
 import com.es.phoneshop.model.product.HashMapProductDao;
 import com.es.phoneshop.model.product.Product;
@@ -35,7 +36,10 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
-    public void add(Cart cart, Long productId, int quantity) throws ProductNotEnoughException {
+    public void add(Cart cart, Long productId, int quantity) throws IllegalProductQuantityValueException, ProductNotEnoughException {
+        if (quantity < 1) {
+            throw new IllegalProductQuantityValueException();
+        }
         synchronized (cart.getItems()) {
             // Try to find cart item
             List<CartItem> items = cart.getItems();
