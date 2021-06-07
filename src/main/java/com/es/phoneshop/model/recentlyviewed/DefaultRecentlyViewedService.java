@@ -33,7 +33,10 @@ public class DefaultRecentlyViewedService implements RecentlyViewedService {
     }
 
     @Override
-    public void update(RecentlyViewed recentlyViewed, Product product) {
+    public void update(RecentlyViewed recentlyViewed, Product product) throws IllegalArgumentException {
+        if (product == null) {
+            throw new IllegalArgumentException("Product can't be null!");
+        }
         synchronized (recentlyViewed.getProducts()) {
             Queue<Product> products = recentlyViewed.getProducts();
             if (products.parallelStream().noneMatch(p -> p.equals(product))) {
