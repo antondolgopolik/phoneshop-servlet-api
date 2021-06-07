@@ -62,9 +62,11 @@ public class ProductDetailsPageServlet extends HttpServlet {
             NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
             quantity = numberFormat.parse(request.getParameter(QUANTITY_PARAM)).intValue();
         } catch (ParseException e) {
-            request.setAttribute(RESULT_ATTR, false);
-            request.setAttribute(QUANTITY_ERROR_ATTR, "Number format exception");
-            doGet(request, response);
+            sendResponseWithQuantityErrorMessage(request, response, "Number format exception");
+            return;
+        }
+        if (quantity < 1) {
+            sendResponseWithQuantityErrorMessage(request, response, "Quantity should be greater than 0");
             return;
         }
         // Add product to cart
@@ -72,9 +74,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             cartService.add(cart, id, quantity);
         } catch (ProductNotEnoughException e) {
-            request.setAttribute(RESULT_ATTR, false);
-            request.setAttribute(QUANTITY_ERROR_ATTR, e.getMessage());
-            doGet(request, response);
+            sendResponseWithQuantityErrorMessage(request, response, e.getMessage());
             return;
         }
         // Send response
@@ -87,5 +87,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             throw new ProductNotFoundException();
         }
+    }
+
+    private void sendResponseWithQuantityErrorMessage(HttpServletRequest request,
+                                                      HttpServletResponse response,
+                                                      String message)
+            throws ServletException, IOException {
+        request.setAttribute(RESULT_ATTR, false);
+        request.setAttribute(QUANTITY_ERROR_ATTR, message);
+        doGet(request, response);
     }
 }
