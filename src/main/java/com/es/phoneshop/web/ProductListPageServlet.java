@@ -13,6 +13,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class ProductListPageServlet extends HttpServlet {
+    private static final String QUERY_PARAM = "query";
+    private static final String SORT_PARAM = "sort";
+    private static final String ORDER_PARAM = "order";
+    private static final String PRODUCTS_ATTR = "products";
+    private static final String RECENTLY_VIEWED_ATTR = "recentlyViewed";
+
     private ProductDao productDao;
     private RecentlyViewedService recentlyViewedService;
 
@@ -26,9 +32,9 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read params
-        String query = request.getParameter("query");
-        String sort = request.getParameter("sort");
-        String order = request.getParameter("order");
+        String query = request.getParameter(QUERY_PARAM);
+        String sort = request.getParameter(SORT_PARAM);
+        String order = request.getParameter(ORDER_PARAM);
         SortType sortType = sort != null
                 ? sort.equals("description") ? SortType.DESCRIPTION : SortType.PRICE
                 : null;
@@ -40,8 +46,8 @@ public class ProductListPageServlet extends HttpServlet {
         // Get recently viewed products
         RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
         // Send response
-        request.setAttribute("products", products);
-        request.setAttribute("recentlyViewed", recentlyViewed);
+        request.setAttribute(PRODUCTS_ATTR, products);
+        request.setAttribute(RECENTLY_VIEWED_ATTR, recentlyViewed);
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 }

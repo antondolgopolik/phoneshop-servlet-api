@@ -21,6 +21,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
+    private static final String QUANTITY_PARAM = "quantity";
+    private static final String PRODUCT_ATTR = "product";
+    private static final String CART_ATTR = "cart";
+    private static final String RESULT_ATTR = "result";
+    private static final String QUANTITY_ERROR_ATTR = "quantityError";
+
     private ProductDao productDao;
     private CartService cartService;
     private RecentlyViewedService recentlyViewedService;
@@ -42,8 +48,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
         Product product = productDao.getProduct(id);
         recentlyViewedService.update(recentlyViewed, product);
         // Send response
-        request.setAttribute("product", product);
-        request.setAttribute("cart", cartService.getCart(request));
+        request.setAttribute(PRODUCT_ATTR, product);
+        request.setAttribute(CART_ATTR, cartService.getCart(request));
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
 
@@ -54,10 +60,10 @@ public class ProductDetailsPageServlet extends HttpServlet {
         int quantity;
         try {
             NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
-            quantity = numberFormat.parse(request.getParameter("quantity")).intValue();
+            quantity = numberFormat.parse(request.getParameter(QUANTITY_PARAM)).intValue();
         } catch (ParseException e) {
-            request.setAttribute("result", false);
-            request.setAttribute("quantityError", "Number format exception");
+            request.setAttribute(RESULT_ATTR, false);
+            request.setAttribute(QUANTITY_ERROR_ATTR, "Number format exception");
             doGet(request, response);
             return;
         }
@@ -66,8 +72,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             cartService.add(cart, id, quantity);
         } catch (ProductNotEnoughException e) {
-            request.setAttribute("result", false);
-            request.setAttribute("quantityError", e.getMessage());
+            request.setAttribute(RESULT_ATTR, false);
+            request.setAttribute(QUANTITY_ERROR_ATTR, e.getMessage());
             doGet(request, response);
             return;
         }
