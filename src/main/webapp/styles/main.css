@@ -28,6 +28,14 @@ td {
     text-align: right;
 }
 
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
 img.product-tile {
     max-width: 64px;
 }

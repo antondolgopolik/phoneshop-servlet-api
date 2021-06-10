@@ -111,4 +111,9 @@ public class Product {
                 price.equals(product.price) && currency.equals(product.currency) &&
                 (stock == product.stock) && imageUrl.equals(product.imageUrl);
     }
+
+    @Override
+    public String toString() {
+        return description;
+    }
 }

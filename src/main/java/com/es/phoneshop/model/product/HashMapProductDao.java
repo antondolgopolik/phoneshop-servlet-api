@@ -8,16 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class HashMapProductDao implements ProductDao {
-    private static volatile HashMapProductDao instance;
-
     private final Map<Long, Product> products = new HashMap<>();
     private volatile long nextId;
 
-    public static synchronized HashMapProductDao getInstance() {
-        if (instance == null) {
-            instance = new HashMapProductDao();
-        }
-        return instance;
+    public static HashMapProductDao getInstance() {
+        return SingletonInstanceHolder.instance;
     }
 
     private HashMapProductDao() {
@@ -51,7 +46,7 @@ public class HashMapProductDao implements ProductDao {
                 stream = search(stream, query);
             }
             // Sort
-            if (sortType != null) {
+            if ((sortType != null) && (orderType != null)) {
                 stream = sort(stream, sortType, orderType);
             }
             // Result
@@ -136,5 +131,9 @@ public class HashMapProductDao implements ProductDao {
         if (product == null) {
             throw new NoProductWithSuchIdException(id);
         }
+    }
+
+    private static class SingletonInstanceHolder {
+        private static final HashMapProductDao instance = new HashMapProductDao();
     }
 }

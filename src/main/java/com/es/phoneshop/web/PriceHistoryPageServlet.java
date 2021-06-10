@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PriceHistoryPageServlet extends HttpServlet {
+    private static final String PRODUCT_ATTR = "product";
+
     private ProductDao productDao;
 
     @Override
@@ -22,14 +24,17 @@ public class PriceHistoryPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read id
-        long id;
+        long id = readId(request);
+        // Send response
+        request.setAttribute(PRODUCT_ATTR, productDao.getProduct(id));
+        request.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(request, response);
+    }
+
+    private long readId(HttpServletRequest request) {
         try {
-            id = Long.parseLong(request.getPathInfo().substring(1));
+            return Long.parseLong(request.getPathInfo().substring(1));
         } catch (NumberFormatException e) {
             throw new ProductNotFoundException();
         }
-        // Send response
-        request.setAttribute("product", productDao.getProduct(id));
-        request.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(request, response);
     }
 }
