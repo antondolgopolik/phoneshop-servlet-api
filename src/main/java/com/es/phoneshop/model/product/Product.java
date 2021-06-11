@@ -1,9 +1,10 @@
 package com.es.phoneshop.model.product;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Product {
+public class Product implements Serializable {
     private final List<PriceHistoryRecord> priceHistory = new LinkedList<>();
 
     private Long id;

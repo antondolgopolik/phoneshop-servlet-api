@@ -5,23 +5,18 @@
 
 <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
 <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
-<%--@elvariable id="result" type="java.lang.Boolean"--%>
 <%--@elvariable id="quantityError" type="java.lang.String"--%>
 <tags:master pageTitle="Product Details">
-    <form method="post" action="./${product.id}">
+    <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
         <div>
             <p>
                     ${cart}
             </p>
-            <c:if test="${not empty result}">
-                <p class="${result ? "success" : "error"}">
-                        ${result ? "Product addition to cart succeeded" : "Product addition to cart failed"}
-                </p>
+            <c:if test="${not empty quantityError}">
+                <p class="error">Product addition to cart failed</p>
             </c:if>
-            <c:if test="${not empty param.result}">
-                <p class="${param.result eq "true" ? "success" : "error"}">
-                        ${param.result eq "true" ? "Product addition to cart succeeded" : "Product addition to cart failed"}
-                </p>
+            <c:if test="${not empty param.status}">
+                <p class="success">${param.status}</p>
             </c:if>
         </div>
         <p>

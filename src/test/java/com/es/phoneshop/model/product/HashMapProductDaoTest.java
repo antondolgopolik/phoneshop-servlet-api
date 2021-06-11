@@ -1,7 +1,6 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

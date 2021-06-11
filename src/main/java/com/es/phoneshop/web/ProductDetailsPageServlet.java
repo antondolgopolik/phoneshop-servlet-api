@@ -25,7 +25,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private static final String QUANTITY_PARAM = "quantity";
     private static final String PRODUCT_ATTR = "product";
     private static final String CART_ATTR = "cart";
-    private static final String RESULT_ATTR = "result";
     private static final String QUANTITY_ERROR_ATTR = "quantityError";
 
     private ProductDao productDao;
@@ -43,7 +42,12 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read id
-        long id = readId(request);
+        long id;
+        try {
+            id = Long.parseLong(request.getPathInfo().substring(1));
+        } catch (NumberFormatException e) {
+            throw new ProductNotFoundException();
+        }
         // Add to recently viewed products
         RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
         Product product = productDao.getProduct(id);
@@ -57,7 +61,13 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Read params
-        long id = readId(request);
+        long id;
+        try {
+            id = Long.parseLong(request.getPathInfo().substring(1));
+        } catch (NumberFormatException e) {
+            response.sendError(400);
+            return;
+        }
         int quantity;
         try {
             quantity = readQuantity(request);
@@ -77,15 +87,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return;
         }
         // Send response
-        response.sendRedirect(request.getContextPath() + "/products/" + id + "?result=" + true);
-    }
-
-    private long readId(HttpServletRequest request) {
-        try {
-            return Long.parseLong(request.getPathInfo().substring(1));
-        } catch (NumberFormatException e) {
-            throw new ProductNotFoundException();
-        }
+        response.sendRedirect(
+                request.getContextPath() + "/products/" + id + "?status=Product addition to cart succeeded"
+        );
     }
 
     private int readQuantity(HttpServletRequest request) throws ParseException {
@@ -102,7 +106,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
                                                       HttpServletResponse response,
                                                       String message)
             throws ServletException, IOException {
-        request.setAttribute(RESULT_ATTR, false);
         request.setAttribute(QUANTITY_ERROR_ATTR, message);
         doGet(request, response);
     }

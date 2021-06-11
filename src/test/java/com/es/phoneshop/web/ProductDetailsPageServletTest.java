@@ -51,7 +51,7 @@ public class ProductDetailsPageServletTest {
     public void testDoGet() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn("/1");
         servlet.doGet(request, response);
-        verify(request, never()).setAttribute("result", false);
+        verify(request, never()).setAttribute(eq("quantityError"), anyString());
         verify(requestDispatcher).forward(request, response);
     }
 
@@ -85,7 +85,7 @@ public class ProductDetailsPageServletTest {
         when(request.getParameter("quantity")).thenReturn("3");
         when(request.getLocale()).thenReturn(Locale.US);
         servlet.doPost(request, response);
-        verify(request, never()).setAttribute("result", false);
+        verify(request, never()).setAttribute(eq("quantityError"), anyString());
         verify(response).sendRedirect(anyString());
     }
 
@@ -105,14 +105,9 @@ public class ProductDetailsPageServletTest {
 
     @Test
     public void testDoPostWrongId() throws ServletException, IOException {
-        boolean flag = false;
         when(request.getPathInfo()).thenReturn("/abc");
-        try {
-            servlet.doPost(request, response);
-        } catch (ProductNotFoundException ignored) {
-            flag = true;
-        }
-        assertTrue(flag);
+        servlet.doPost(request, response);
+        verify(response).sendError(400);
     }
 
     @Test
@@ -121,7 +116,6 @@ public class ProductDetailsPageServletTest {
         when(request.getParameter("quantity")).thenReturn("0");
         when(request.getLocale()).thenReturn(Locale.US);
         servlet.doPost(request, response);
-        verify(request).setAttribute("result", false);
         verify(response, never()).sendRedirect(anyString());
     }
 
@@ -131,7 +125,6 @@ public class ProductDetailsPageServletTest {
         when(request.getParameter("quantity")).thenReturn("1000");
         when(request.getLocale()).thenReturn(Locale.US);
         servlet.doPost(request, response);
-        verify(request).setAttribute("result", false);
         verify(response, never()).sendRedirect(anyString());
     }
 
@@ -141,7 +134,7 @@ public class ProductDetailsPageServletTest {
         when(request.getParameter("quantity")).thenReturn("3.5");
         when(request.getLocale()).thenReturn(Locale.US);
         servlet.doPost(request, response);
-        verify(request).setAttribute("result", false);
+        verify(request).setAttribute(eq("quantityError"), anyString());
         verify(response, never()).sendRedirect(anyString());
     }
 
@@ -151,7 +144,7 @@ public class ProductDetailsPageServletTest {
         when(request.getParameter("quantity")).thenReturn("abc");
         when(request.getLocale()).thenReturn(Locale.US);
         servlet.doPost(request, response);
-        verify(request).setAttribute("result", false);
+        verify(request).setAttribute(eq("quantityError"), anyString());
         verify(response, never()).sendRedirect(anyString());
     }
 }
