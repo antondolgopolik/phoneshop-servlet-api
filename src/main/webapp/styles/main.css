@@ -24,7 +24,7 @@ td {
     vertical-align: top;
 }
 
-.price {
+.price, .quantity {
     text-align: right;
 }
 
