@@ -6,11 +6,31 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-public class Cart implements Serializable {
-    private final List<CartItem> items = new ArrayList<>();
-    private final Currency currency = Currency.getInstance("USD");
-    private BigDecimal totalCost = new BigDecimal(0);
+public class Cart implements Serializable, Cloneable {
+    private final List<CartItem> items;
+    private final Currency currency;
+    private BigDecimal totalCost;
     private int totalQuantity;
+
+    public Cart(Cart cart) {
+        items = new ArrayList<>(cart.items.size());
+        for (CartItem item : cart.items) {
+            try {
+                items.add((CartItem) item.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        currency = cart.currency;
+        totalCost = cart.totalCost;
+        totalQuantity = cart.totalQuantity;
+    }
+
+    public Cart() {
+        items = new ArrayList<>();
+        currency = Currency.getInstance("USD");
+        totalCost = new BigDecimal(0);
+    }
 
     public List<CartItem> getItems() {
         return items;

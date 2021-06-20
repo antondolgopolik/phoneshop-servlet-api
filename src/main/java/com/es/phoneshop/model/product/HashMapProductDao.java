@@ -19,7 +19,7 @@ public class HashMapProductDao implements ProductDao {
     }
 
     @Override
-    public Product getProduct(Long id) throws NoProductWithSuchIdException {
+    public Product get(Long id) throws NoProductWithSuchIdException {
         // Find product
         Product product;
         synchronized (products) {
@@ -34,7 +34,7 @@ public class HashMapProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query, SortType sortType, OrderType orderType) {
+    public List<Product> find(String query, SortType sortType, OrderType orderType) {
         synchronized (products) {
             Collection<Product> products = this.products.values();
             // General filtration

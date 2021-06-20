@@ -54,7 +54,7 @@ public class ProductListPageServlet extends HttpServlet {
         // Get cart
         Cart cart = cartService.getCart(request);
         // Find products
-        List<Product> products = productDao.findProducts(query, sortType, orderType);
+        List<Product> products = productDao.find(query, sortType, orderType);
         // Get recently viewed products
         RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
         // Send response

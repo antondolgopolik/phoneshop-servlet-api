@@ -26,7 +26,7 @@ public class PriceHistoryPageServlet extends HttpServlet {
         // Read id
         long id = readId(request);
         // Send response
-        request.setAttribute(PRODUCT_ATTR, productDao.getProduct(id));
+        request.setAttribute(PRODUCT_ATTR, productDao.get(id));
         request.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(request, response);
     }
 

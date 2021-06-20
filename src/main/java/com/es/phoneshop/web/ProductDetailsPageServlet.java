@@ -50,7 +50,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         }
         // Add to recently viewed products
         RecentlyViewed recentlyViewed = recentlyViewedService.getRecentlyViewed(request);
-        Product product = productDao.getProduct(id);
+        Product product = productDao.get(id);
         recentlyViewedService.update(recentlyViewed, product);
         // Send response
         request.setAttribute(PRODUCT_ATTR, product);

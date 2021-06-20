@@ -31,27 +31,27 @@ public class HashMapProductDaoTest {
 
     @Test
     public void testGetProduct() throws NoProductWithSuchIdException {
-        Product product1 = productDao.getProduct(0L);
+        Product product1 = productDao.get(0L);
         assertEquals((long) product1.getId(), 0L);
-        Product product2 = productDao.getProduct(10L);
+        Product product2 = productDao.get(10L);
         assertEquals((long) product2.getId(), 10L);
-        Product product3 = productDao.getProduct(12L);
+        Product product3 = productDao.get(12L);
         assertEquals((long) product3.getId(), 12L);
     }
 
     @Test
     public void testFindProductsNullQuery() {
-        assertFalse(productDao.findProducts(null, SortType.DESCRIPTION, OrderType.DESCENDING).isEmpty());
+        assertFalse(productDao.find(null, SortType.DESCRIPTION, OrderType.DESCENDING).isEmpty());
     }
 
     @Test
     public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING).isEmpty());
+        assertFalse(productDao.find("", SortType.PRICE, OrderType.ASCENDING).isEmpty());
     }
 
     @Test
     public void testFindProductsGeneralFilter() {
-        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
+        List<Product> products1 = productDao.find("", SortType.DESCRIPTION, OrderType.ASCENDING);
         List<Product> products2 = products1.stream()
                 .filter(product -> product.getPrice() != null)
                 .filter(product -> product.getStock() > 0)
@@ -61,8 +61,8 @@ public class HashMapProductDaoTest {
 
     @Test
     public void testFindProductsDescriptionOrder() {
-        List<Product> products1 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.DESCENDING);
-        List<Product> products2 = productDao.findProducts("", SortType.DESCRIPTION, OrderType.ASCENDING);
+        List<Product> products1 = productDao.find("", SortType.DESCRIPTION, OrderType.DESCENDING);
+        List<Product> products2 = productDao.find("", SortType.DESCRIPTION, OrderType.ASCENDING);
         assertEquals(products1.size(), products2.size());
         Collections.reverse(products2);
         Iterator<Product> iterator1 = products1.iterator();
@@ -74,8 +74,8 @@ public class HashMapProductDaoTest {
 
     @Test
     public void testFindProductsPriceOrder() {
-        List<Product> products1 = productDao.findProducts("", SortType.PRICE, OrderType.DESCENDING);
-        List<Product> products2 = productDao.findProducts("", SortType.PRICE, OrderType.ASCENDING);
+        List<Product> products1 = productDao.find("", SortType.PRICE, OrderType.DESCENDING);
+        List<Product> products2 = productDao.find("", SortType.PRICE, OrderType.ASCENDING);
         assertEquals(products1.size(), products2.size());
         Collections.reverse(products2);
         Iterator<Product> iterator1 = products1.iterator();
@@ -95,11 +95,11 @@ public class HashMapProductDaoTest {
                 20L, "code2", "des2", BigDecimal.ZERO, usd, 2, "url2"
         );
         productDao.save(product1);
-        assertEquals((long) productDao.getProduct(20L).getId(), 20);
-        assertEquals(product1, productDao.getProduct(20L));
+        assertEquals((long) productDao.get(20L).getId(), 20);
+        assertEquals(product1, productDao.get(20L));
         productDao.save(product2);
-        assertEquals((long) productDao.getProduct(20L).getId(), 20);
-        assertEquals(product2, productDao.getProduct(20L));
+        assertEquals((long) productDao.get(20L).getId(), 20);
+        assertEquals(product2, productDao.get(20L));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class HashMapProductDaoTest {
         boolean flag = false;
         productDao.delete(0L);
         try {
-            productDao.getProduct(0L);
+            productDao.get(0L);
         } catch (NoProductWithSuchIdException ignored) {
             flag = true;
         }
@@ -116,7 +116,7 @@ public class HashMapProductDaoTest {
         flag = false;
         productDao.delete(10L);
         try {
-            productDao.getProduct(10L);
+            productDao.get(10L);
         } catch (NoProductWithSuchIdException ignored) {
             flag = true;
         }
@@ -125,7 +125,7 @@ public class HashMapProductDaoTest {
         flag = false;
         productDao.delete(12L);
         try {
-            productDao.getProduct(12L);
+            productDao.get(12L);
         } catch (NoProductWithSuchIdException ignored) {
             flag = true;
         }
