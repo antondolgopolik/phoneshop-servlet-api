@@ -1,9 +1,9 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.TestUtils;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.model.product.HashMapProductDaoTest;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 import static org.junit.Assert.assertTrue;
@@ -33,18 +34,18 @@ public class ProductDetailsPageServletTest {
     @Mock
     private RequestDispatcher requestDispatcher;
 
-    private final ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
-
-    @BeforeClass
-    public static void classSetup() {
-        HashMapProductDaoTest.initHashMapProductDao(100);
-    }
+    private ProductDetailsPageServlet servlet;
 
     @Before
-    public void setup() throws ServletException {
-        servlet.init();
+    public void setup() throws ServletException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // Environment
+        TestUtils.setupEnvironment();
+        HashMapProductDaoTest.initHashMapProductDao(100);
         when(request.getSession()).thenReturn(httpSession);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        // Variables
+        servlet = new ProductDetailsPageServlet();
+        servlet.init();
     }
 
     @Test

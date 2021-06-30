@@ -86,9 +86,22 @@
             </tr>
         </table>
         <p>
-            <button>Update</button>
+            <c:if test="${not empty cart.items}">
+                <button>Update</button>
+            </c:if>
+            <c:if test="${empty cart.items}">
+                <button disabled>Update</button>
+            </c:if>
         </p>
     </form>
     <form id="deleteCartItem" method="post"></form>
+    <form action="${pageContext.servletContext.contextPath}/checkout">
+        <c:if test="${not empty cart.items}">
+            <button>Checkout</button>
+        </c:if>
+        <c:if test="${empty cart.items}">
+            <button disabled>Checkout</button>
+        </c:if>
+    </form>
     <tags:footer/>
 </tags:master>

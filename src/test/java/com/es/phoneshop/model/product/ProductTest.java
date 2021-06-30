@@ -11,7 +11,7 @@ public class ProductTest {
         for (int i = 0; i < n; i++) {
             products[i] = new Product(
                     "code " + i, "description " + i,
-                    BigDecimal.valueOf(i), usd, i, "url " + i
+                    BigDecimal.valueOf(100), usd, 100, "url " + i
             );
         }
         return products;
@@ -19,8 +19,8 @@ public class ProductTest {
 
     public static Product getMockProduct() {
         return new Product(
-                "code", "description", BigDecimal.ONE,
-                Currency.getInstance("USD"), 1, "url"
+                "code", "description", BigDecimal.valueOf(100),
+                Currency.getInstance("USD"), 100, "url"
         );
     }
 }

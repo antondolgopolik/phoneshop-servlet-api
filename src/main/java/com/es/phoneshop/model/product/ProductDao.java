@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ProductDao {
 
-    Product getProduct(Long id) throws NoProductWithSuchIdException;
+    Product get(Long id) throws NoProductWithSuchIdException;
 
-    List<Product> findProducts(String query, SortType sortType, OrderType orderType);
+    List<Product> find(String query, SortType sortType, OrderType orderType);
 
     void save(Product product);
 

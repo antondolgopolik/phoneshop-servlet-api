@@ -1,5 +1,6 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -30,13 +32,17 @@ public class ProductListPageServletTest {
     @Mock
     private RequestDispatcher requestDispatcher;
 
-    private final ProductListPageServlet servlet = new ProductListPageServlet();
+    private ProductListPageServlet servlet;
 
     @Before
-    public void setup() throws ServletException {
-        servlet.init();
+    public void setup() throws ServletException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // Environment
+        TestUtils.setupEnvironment();
         when(request.getSession()).thenReturn(httpSession);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        // Variables
+        servlet = new ProductListPageServlet();
+        servlet.init();
     }
 
     @Test

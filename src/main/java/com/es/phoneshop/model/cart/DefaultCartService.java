@@ -40,6 +40,13 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
+    public Cart copyCart(Cart cart) {
+        synchronized (cart.getItems()) {
+            return new Cart(cart);
+        }
+    }
+
+    @Override
     public void add(Cart cart, Long productId, int quantity)
             throws IllegalProductQuantityValueException, NoProductWithSuchIdException, ProductNotEnoughException {
         if (quantity < 1) {
@@ -48,7 +55,7 @@ public class DefaultCartService implements CartService {
         synchronized (cart.getItems()) {
             // Try to find cart item
             List<CartItem> items = cart.getItems();
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(productId);
             CartItem cartItem = items.parallelStream()
                     .filter(item -> item.getProduct().equals(product))
                     .findAny().orElse(null);
@@ -92,6 +99,15 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
+    public void clear(Cart cart) {
+        synchronized (cart.getItems()) {
+            cart.getItems().clear();
+            cart.setTotalCost(BigDecimal.ZERO);
+            cart.setTotalQuantity(0);
+        }
+    }
+
+    @Override
     public void update(Cart cart, Long productId, int quantity)
             throws IllegalProductQuantityValueException, NoProductWithSuchIdException, CartItemNotFoundException,
             ProductNotEnoughException {
@@ -101,7 +117,7 @@ public class DefaultCartService implements CartService {
         synchronized (cart.getItems()) {
             // Find cart item
             List<CartItem> items = cart.getItems();
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(productId);
             CartItem cartItem = items.parallelStream()
                     .filter(item -> item.getProduct().equals(product))
                     .findAny().orElse(null);

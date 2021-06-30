@@ -4,6 +4,9 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
-<a href="${pageContext.servletContext.contextPath}/cart">
-    Cart: ${cart.totalQuantity} items
+<fmt:formatNumber var="totalQuantity" value="${cart.totalQuantity}"/>
+<fmt:formatNumber var="totalCost" value="${cart.totalCost}" type="currency"
+                  currencySymbol="${cart.currency.symbol}"/>
+<a href="${pageContext.servletContext.contextPath}/cart" class="mini-cart">
+    Cart: ${totalQuantity} qty, ${totalCost}
 </a>
