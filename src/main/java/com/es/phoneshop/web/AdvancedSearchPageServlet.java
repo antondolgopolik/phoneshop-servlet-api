@@ -23,6 +23,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
     private static final String MAX_PRICE_PARAM = "maxPrice";
     private static final String PRODUCTS_ATTR = "products";
     private static final String SEARCH_MODES_ATTR = "searchModes";
+    private static final String STATUS_ATTR = "status";
     private static final String ERRORS_ATTR = "errors";
 
     private ProductDao productDao;
@@ -50,7 +51,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
         request.setAttribute(SEARCH_MODES_ATTR, advancedSearchService.getSearchModes());
         if ((query != null) || (searchMode != null) || (minPrice != null) || (maxPrice != null)) {
             if (!errors.isEmpty()) {
-                request.setAttribute("status", "Product search failed");
+                request.setAttribute(STATUS_ATTR, "Product search failed");
             }
             request.setAttribute(ERRORS_ATTR, errors);
         }
@@ -75,7 +76,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
                 return searchMode;
             }
         }
-        errors.put("searchMode", "Wrong search mode");
+        errors.put(SEARCH_MODE_PARAM, "Wrong search mode");
         return null;
     }
 

@@ -7,7 +7,6 @@ public class AdvancedSearchService {
     }
 
     private AdvancedSearchService() {
-
     }
 
     public SearchMode[] getSearchModes() {
