@@ -1,8 +1,11 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
+import com.es.phoneshop.model.advancedSearch.SearchMode;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -99,6 +102,64 @@ public class HashMapProductDao implements ProductDao {
                 return stream.sorted(Comparator.comparing(Product::getPrice));
             }
         }
+    }
+
+    @Override
+    public List<Product> find(String query, SearchMode searchMode, BigDecimal minPrice, BigDecimal maxPrice) {
+        synchronized (products) {
+            Collection<Product> products = this.products.values();
+            // General filtration
+            Stream<Product> stream = products.stream()
+                    .filter(product -> product.getPrice() != null)
+                    .filter(product -> product.getStock() > 0);
+            // Search
+            if (query != null) {
+                stream = search(stream, query, searchMode);
+            }
+            // Min price
+            if (minPrice != null) {
+                stream = minPriceFilter(stream, minPrice);
+            }
+            // Max sort
+            if (maxPrice != null) {
+                stream = maxPriceFilter(stream, maxPrice);
+            }
+            // Result
+            return stream.collect(Collectors.toList());
+        }
+    }
+
+    private Stream<Product> search(Stream<Product> stream, String query, SearchMode searchMode) {
+        query = query.toLowerCase();
+        if (searchMode == SearchMode.ALL_WORDS) {
+            return allWordsSearchFilter(stream, query);
+        } else {
+            return anyWordSearchFilter(stream, query);
+        }
+    }
+
+    private Stream<Product> allWordsSearchFilter(Stream<Product> stream, String query) {
+        return stream.filter(product -> {
+            String[] descriptionWords = product.getDescription().toLowerCase().split(" ");
+            return Arrays.stream(descriptionWords)
+                    .allMatch(descriptionWord -> descriptionWord.contains(query));
+        });
+    }
+
+    private Stream<Product> anyWordSearchFilter(Stream<Product> stream, String query) {
+        return stream.filter(product -> {
+            String[] descriptionWords = product.getDescription().toLowerCase().split(" ");
+            return Arrays.stream(descriptionWords)
+                    .anyMatch(descriptionWord -> descriptionWord.contains(query));
+        });
+    }
+
+    private Stream<Product> minPriceFilter(Stream<Product> stream, BigDecimal minPrice) {
+        return stream.filter(product -> product.getPrice().compareTo(minPrice) >= 0);
+    }
+
+    private Stream<Product> maxPriceFilter(Stream<Product> stream, BigDecimal maxPrice) {
+        return stream.filter(product -> product.getPrice().compareTo(maxPrice) <= 0);
     }
 
     @Override
