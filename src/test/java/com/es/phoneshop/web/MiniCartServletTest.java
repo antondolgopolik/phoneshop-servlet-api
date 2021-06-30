@@ -1,5 +1,6 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.TestUtils;
 import com.es.phoneshop.model.product.HashMapProductDaoTest;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -31,18 +33,18 @@ public class MiniCartServletTest {
     @Mock
     private RequestDispatcher requestDispatcher;
 
-    private final MiniCartServlet servlet = new MiniCartServlet();
-
-    @BeforeClass
-    public static void classSetup() {
-        HashMapProductDaoTest.initHashMapProductDao(100);
-    }
+    private MiniCartServlet servlet;
 
     @Before
-    public void setup() throws ServletException {
-        servlet.init();
+    public void setup() throws ServletException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // Environment
+        TestUtils.setupEnvironment();
+        HashMapProductDaoTest.initHashMapProductDao(10);
         when(request.getSession()).thenReturn(httpSession);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        // Variables
+        servlet = new MiniCartServlet();
+        servlet.init();
     }
 
     @Test

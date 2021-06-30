@@ -54,14 +54,14 @@
         </tr>
         <tr>
             <td colspan="2">Delivery cost</td>
-            <td colspan="2" class="quantity">
+            <td colspan="2" class="price">
                 <fmt:formatNumber value="${order.deliveryCost}" type="currency"
                                   currencySymbol="${order.cart.currency.symbol}"/>
             </td>
         </tr>
         <tr>
             <td colspan="2">Subtotal</td>
-            <td colspan="2" class="quantity">
+            <td colspan="2" class="price">
                 <fmt:formatNumber value="${order.subtotal}" type="currency"
                                   currencySymbol="${order.cart.currency.symbol}"/>
             </td>

@@ -1,9 +1,14 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.TestUtils;
 import com.es.phoneshop.exceptions.NoProductWithSuchIdException;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Currency;
@@ -13,8 +18,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class HashMapProductDaoTest {
-    private final ProductDao productDao = HashMapProductDao.getInstance();
+    private ProductDao productDao;
 
     public static void initHashMapProductDao(int n) {
         HashMapProductDao hashMapProductDao = HashMapProductDao.getInstance();
@@ -24,19 +30,23 @@ public class HashMapProductDaoTest {
         }
     }
 
-    @BeforeClass
-    public static void classSetup() {
-        initHashMapProductDao(100);
+    @Before
+    public void setup() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // Environment
+        TestUtils.setupEnvironment();
+        initHashMapProductDao(10);
+        // Variables
+        productDao = HashMapProductDao.getInstance();
     }
 
     @Test
     public void testGetProduct() throws NoProductWithSuchIdException {
         Product product1 = productDao.get(0L);
         assertEquals((long) product1.getId(), 0L);
-        Product product2 = productDao.get(10L);
-        assertEquals((long) product2.getId(), 10L);
-        Product product3 = productDao.get(12L);
-        assertEquals((long) product3.getId(), 12L);
+        Product product2 = productDao.get(7L);
+        assertEquals((long) product2.getId(), 7L);
+        Product product3 = productDao.get(9L);
+        assertEquals((long) product3.getId(), 9L);
     }
 
     @Test
@@ -114,18 +124,18 @@ public class HashMapProductDaoTest {
         assertTrue(flag);
 
         flag = false;
-        productDao.delete(10L);
+        productDao.delete(7L);
         try {
-            productDao.get(10L);
+            productDao.get(7L);
         } catch (NoProductWithSuchIdException ignored) {
             flag = true;
         }
         assertTrue(flag);
 
         flag = false;
-        productDao.delete(12L);
+        productDao.delete(9L);
         try {
-            productDao.get(12L);
+            productDao.get(9L);
         } catch (NoProductWithSuchIdException ignored) {
             flag = true;
         }

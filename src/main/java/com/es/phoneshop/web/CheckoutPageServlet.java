@@ -63,13 +63,8 @@ public class CheckoutPageServlet extends HttpServlet {
         if (errors.isEmpty()) {
             Cart cart = cartService.getCart(request);
             Order order = orderService.getOrder(cart);
-            // Update order
-            order.setFirstName(firstName);
-            order.setLastName(lastName);
-            order.setPhone(phone);
-            order.setDeliveryDate(deliveryDate);
-            order.setDeliveryAddress(deliveryAddress);
-            order.setPaymentMethod(paymentMethod);
+            // Populate order
+            populateOrder(order, firstName, lastName, phone, deliveryDate, deliveryAddress, paymentMethod);
             // Save order
             orderDao.save(order);
             // Clear cart
@@ -116,5 +111,15 @@ public class CheckoutPageServlet extends HttpServlet {
         }
         errors.put("paymentMethod", "Wrong payment method");
         return null;
+    }
+
+    private void populateOrder(Order order, String firstName, String lastName, String phone,
+                               LocalDate deliveryDate, String deliveryAddress, PaymentMethod paymentMethod) {
+        order.setFirstName(firstName);
+        order.setLastName(lastName);
+        order.setPhone(phone);
+        order.setDeliveryDate(deliveryDate);
+        order.setDeliveryAddress(deliveryAddress);
+        order.setPaymentMethod(paymentMethod);
     }
 }

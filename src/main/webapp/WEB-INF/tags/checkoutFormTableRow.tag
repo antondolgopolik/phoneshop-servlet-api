@@ -5,7 +5,7 @@
 <%@ attribute name="errors" required="true" type="java.util.Map" %>
 
 <tr>
-    <td>${rowName}<span style="color: red">*</span></td>
+    <td>${rowName}<span class="field-required-span">*</span></td>
     <td>
         <label>
             <input name="${paramName}" value="${param.get(paramName)}">

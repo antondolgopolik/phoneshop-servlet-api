@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultDosProtectionService implements DosProtectionService {
-    private static final long THRESHOLD = 10;
+    private static final long THRESHOLD = 100;
 
     private final Map<String, Long> counters = new ConcurrentHashMap<>();
 

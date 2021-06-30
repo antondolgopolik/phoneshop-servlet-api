@@ -1,9 +1,9 @@
 package com.es.phoneshop.model.recentlyviewed;
 
+import com.es.phoneshop.TestUtils;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductTest;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,34 +11,36 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.InvocationTargetException;
 
 import static com.es.phoneshop.model.product.HashMapProductDaoTest.initHashMapProductDao;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultRecentlyViewedServiceTest {
-    private final DefaultRecentlyViewedService defaultRecentlyViewedService = DefaultRecentlyViewedService.getInstance();
+    private DefaultRecentlyViewedService defaultRecentlyViewedService;
 
     @Mock
     private HttpServletRequest httpServletRequest;
     @Mock
     private HttpSession httpSession;
 
-    @BeforeClass
-    public static void classSetup() {
-        initHashMapProductDao(100);
-    }
-
     @Before
-    public void setup() {
+    public void setup() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // Environment
+        TestUtils.setupEnvironment();
+        initHashMapProductDao(10);
         when(httpServletRequest.getSession()).thenReturn(httpSession);
+        // Variables
+        defaultRecentlyViewedService = DefaultRecentlyViewedService.getInstance();
     }
 
     @Test
     public void testUpdate() {
         RecentlyViewed recentlyViewed = defaultRecentlyViewedService.getRecentlyViewed(httpServletRequest);
-        Product[] products = ProductTest.getMockProducts(10);
+        Product[] products = ProductTest.getMockProducts(5);
         for (Product product : products) {
             defaultRecentlyViewedService.update(recentlyViewed, product);
         }

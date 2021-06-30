@@ -62,6 +62,7 @@ public class ProductListPageServlet extends HttpServlet {
         request.setAttribute(PRODUCTS_ATTR, products);
         request.setAttribute(RECENTLY_VIEWED_ATTR, recentlyViewed);
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
+
     }
 
     private SortType readSortType(HttpServletRequest request) {
